@@ -187,7 +187,17 @@ def process_relation_triplet(triplet):
                     s.likes.append(o)
                 if s not in o.likes:
                     o.likes.append(s)
-
+    if root.text == 'are' and triplet.object == 'friends':
+        sub_span = doc.char_span(sentence.find(triplet.subject), len(sentence))
+        people = [token.text for token in sub_span if token.ent_type_ == 'PERSON']
+        for s in people:
+            s = add_person(s)
+            for o in [person for person in people if person != s.name]:
+                o = add_person(o)
+                if o not in s.likes:
+                    s.likes.append(o)
+                if s not in o.likes:
+                    o.likes.append(s)
 
     # Process (PET, has, NAME)
     if triplet.subject.endswith('name') and ('dog' in triplet.subject or 'cat' in triplet.subject):
